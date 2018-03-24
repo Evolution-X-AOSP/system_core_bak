@@ -927,7 +927,9 @@ void PropertyLoadBootDefaults() {
     // Restore the normal property override security after init extension is executed
     weaken_prop_override_security = false;
 
-    update_sys_usb_config();
+    if (android::base::GetBoolProperty("ro.persistent_properties.ready", false)) {
+        update_sys_usb_config();
+    }
 }
 
 bool LoadPropertyInfoFromFile(const std::string& filename,
