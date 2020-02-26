@@ -222,7 +222,7 @@ bool GetDeviceLockStatus() {
     } else if (verifiedbootstategreen) {
         return false;
     } else {
-        return cmdline.find("androidboot.verifiedbootstate=orange") == std::string::npos;
+        return cmdline.find("androidboot.verifiedbootstate=green") != std::string::npos;
     }
 }
 
