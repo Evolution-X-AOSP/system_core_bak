@@ -1386,6 +1386,21 @@ static void ProcessBootconfig() {
     });
 }
 
+static void SetSafetyNetProps() {
+    // Bail out if this is recovery, fastbootd, or anything other than a normal boot.
+    // fastbootd, in particular, needs the real values so it can allow flashing on
+    // unlocked bootloaders.
+    if (IsRecoveryMode()) {
+        return;
+    }
+
+    // Spoof properties
+    InitPropertySet("ro.boot.flash.locked", "1");
+    InitPropertySet("ro.boot.verifiedbootstate", "green");
+    InitPropertySet("ro.boot.veritymode", "enforcing");
+    InitPropertySet("ro.boot.vbmeta.device_state", "locked");
+}
+
 void PropertyInit() {
     selinux_callback cb;
     cb.func_audit = PropertyAuditCallback;
@@ -1398,6 +1413,11 @@ void PropertyInit() {
     }
     if (!property_info_area.LoadDefaultPath()) {
         LOG(FATAL) << "Failed to load serialized property info file";
+    }
+
+    // Report valid verified boot chain to help pass Google SafetyNet integrity checks
+    if (!IsRecoveryMode()) {
+        SetSafetyNetProps();
     }
 
     // If arguments are passed both on the command line and in DT,
