@@ -33,6 +33,7 @@ cc_defaults {
 
 cc_binary {
     name: "logcat",
+    recovery_available: true,
 
     defaults: ["logcat_defaults"],
     srcs: [
